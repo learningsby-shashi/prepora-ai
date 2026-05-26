@@ -25,7 +25,7 @@ export default function Signup() {
         await new Promise((r) => setTimeout(r, 400));
       }
       if (data.session) {
-        showToast('Welcome to Prepora.ai!', 'success');
+        showToast('Welcome to Prepora!', 'success');
         navigate('/onboarding');
       } else {
         setConfirmMsg(true);
@@ -54,8 +54,8 @@ export default function Signup() {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, background: 'linear-gradient(135deg, #EEF2FF 0%, #F8FAFC 60%)' }}>
       <div className="card" style={{ width: '100%', maxWidth: 440 }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div className="gradient-text" style={{ fontSize: 28, fontWeight: 800, fontFamily: 'Poppins' }}>Prepora.ai</div>
-          <p style={{ color: '#64748B', margin: '6px 0 0' }}>Scan. Learn. Practice. Improve.</p>
+          <div className="gradient-text" style={{ fontSize: 28, fontWeight: 800, fontFamily: 'Poppins' }}>Prepora</div>
+          <p style={{ color: '#64748B', margin: '6px 0 0' }}>Preparation matters.</p>
         </div>
         <h2 style={{ marginBottom: 6 }}>Create your account</h2>
         <p style={{ color: '#64748B', marginBottom: 18 }}>Set up your child's smart prep partner.</p>

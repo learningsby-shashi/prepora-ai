@@ -67,7 +67,7 @@ export default function Reports() {
   const weak = subjectChart.filter((s) => s.accuracy < 60).slice(0, 5);
 
   const shareWA = () => {
-    const text = `📊 ${activeChild.name}'s Prepora.ai progress: ${sessions.length} sessions, avg accuracy ${(sessions.reduce((a,s) => a + Number(s.accuracy||0),0)/(sessions.length||1)).toFixed(1)}% — streak ${activeChild.streak}d 🔥`;
+    const text = `📊 ${activeChild.name}'s Prepora progress: ${sessions.length} sessions, avg accuracy ${(sessions.reduce((a,s) => a + Number(s.accuracy||0),0)/(sessions.length||1)).toFixed(1)}% — streak ${activeChild.streak}d 🔥`;
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };

@@ -28,7 +28,7 @@ export default function Login() {
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20, background: 'linear-gradient(135deg, #EEF2FF 0%, #F8FAFC 60%)' }}>
       <div className="card" style={{ width: '100%', maxWidth: 420 }}>
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
-          <div className="gradient-text" style={{ fontSize: 28, fontWeight: 800, fontFamily: 'Poppins' }}>Prepora.ai</div>
+          <div className="gradient-text" style={{ fontSize: 28, fontWeight: 800, fontFamily: 'Poppins' }}>Prepora</div>
           <p style={{ color: '#64748B', margin: '6px 0 0' }}>Welcome back</p>
         </div>
         <form onSubmit={submit}>
@@ -41,7 +41,7 @@ export default function Login() {
           </button>
         </form>
         <p style={{ textAlign: 'center', marginTop: 16, fontSize: 14, color: '#64748B' }}>
-          New to Prepora.ai? <Link to="/signup" style={{ color: '#4F46E5', fontWeight: 600 }}>Create an account</Link>
+          New to Prepora? <Link to="/signup" style={{ color: '#4F46E5', fontWeight: 600 }}>Create an account</Link>
         </p>
       </div>
     </div>

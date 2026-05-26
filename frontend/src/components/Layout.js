@@ -56,7 +56,7 @@ export const Layout = ({ children }) => {
             <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
             <path d="M6 12v5c3 3 9 3 12 0v-5" />
           </svg>
-          Prepora.ai
+          Prepora
         </div>
         {kids && kids.length > 1 && (
           <select className="input" style={{ marginBottom: 16, fontSize: 13 }} value={activeChild?.id || ''} onChange={(e) => setActiveChildId(e.target.value)}>

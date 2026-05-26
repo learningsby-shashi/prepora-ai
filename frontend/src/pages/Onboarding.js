@@ -132,7 +132,7 @@ export default function Onboarding() {
   return (
     <div style={{ minHeight: '100vh', padding: '30px 20px', background: 'linear-gradient(135deg,#EEF2FF 0%, #F8FAFC 50%)' }}>
       <div style={{ maxWidth: 720, margin: '0 auto' }}>
-        <div className="gradient-text" style={{ fontSize: 22, fontWeight: 800, fontFamily: 'Poppins', textAlign: 'center', marginBottom: 8 }}>🎓 Prepora.ai</div>
+        <div className="gradient-text" style={{ fontSize: 22, fontWeight: 800, fontFamily: 'Poppins', textAlign: 'center', marginBottom: 8 }}>🎓 Prepora</div>
         <div style={{ textAlign: 'center', color: '#64748B', marginBottom: 24 }}>Let's set up your child's profile</div>
         <div style={{ display: 'flex', gap: 8, marginBottom: 22 }}>
           {[1,2,3].map((s) => (

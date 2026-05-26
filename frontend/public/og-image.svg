@@ -23,8 +23,7 @@
       <path d="M14 30v14c6 5 26 5 36 0V30" />
     </g>
   </g>
-  <text x="210" y="230" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="72" fill="#0F172A">Prepora.ai</text>
-  <text x="210" y="310" font-family="Inter, Arial, sans-serif" font-weight="700" font-size="56" fill="url(#text)">Scan. Learn.</text>
-  <text x="210" y="380" font-family="Inter, Arial, sans-serif" font-weight="700" font-size="56" fill="#0F172A">Practice. Improve.</text>
+  <text x="210" y="240" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="88" fill="#0F172A">Prepora</text>
+  <text x="210" y="340" font-family="Inter, Arial, sans-serif" font-weight="700" font-size="56" fill="url(#text)">Preparation matters.</text>
   <text x="80" y="540" font-family="Inter, Arial, sans-serif" font-weight="500" font-size="28" fill="#475569">AI-powered exam prep for CBSE • ICSE • JEE • NEET</text>
 </svg>

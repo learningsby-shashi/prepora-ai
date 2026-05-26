@@ -5,7 +5,7 @@ export default function Landing() {
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #EEF2FF 0%, #F8FAFC 40%)' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 6%', position: 'sticky', top: 0, background: 'rgba(248,250,252,0.85)', backdropFilter: 'blur(8px)', zIndex: 10 }}>
-        <div className="gradient-text" style={{ fontSize: 24, fontWeight: 800, fontFamily: 'Poppins' }}>🎓 Prepora.ai</div>
+        <div className="gradient-text" style={{ fontSize: 24, fontWeight: 800, fontFamily: 'Poppins' }}>🎓 Prepora</div>
         <div style={{ display: 'flex', gap: 12 }}>
           <Link to="/login" className="btn-ghost" style={{ textDecoration: 'none' }}>Sign in</Link>
           <Link to="/signup" className="btn-primary" style={{ textDecoration: 'none' }} data-testid="landing-signup">Get started</Link>
@@ -15,11 +15,11 @@ export default function Landing() {
       <section style={{ padding: '60px 6% 70px', textAlign: 'center', maxWidth: 980, margin: '0 auto' }}>
         <div className="badge badge-indigo" style={{ fontSize: 12, marginBottom: 14 }}>For Indian school parents • CBSE • ICSE • JEE • NEET</div>
         <h1 style={{ fontSize: 'clamp(36px, 6vw, 60px)', lineHeight: 1.1, margin: 0 }}>
-          <span className="gradient-text">Scan. Learn.</span><br />
-          Practice. Improve.
+          <span className="gradient-text">Preparation</span><br />
+          matters.
         </h1>
         <p style={{ fontSize: 18, color: '#475569', maxWidth: 640, margin: '20px auto 30px' }}>
-          Upload any chapter, textbook page, or notes — and Prepora.ai instantly generates
+          Upload any chapter, textbook page, or notes — and Prepora instantly generates
           AI-powered practice papers, tracks your child's standing among classmates, and
           builds a personalised improvement plan.
         </p>
@@ -76,7 +76,7 @@ export default function Landing() {
       </section>
 
       <footer style={{ textAlign: 'center', padding: '24px', color: '#94A3B8', borderTop: '1px solid #E2E8F0', background: 'white' }}>
-        Prepora.ai — Scan. Learn. Practice. Improve.
+        Prepora — Preparation matters.
       </footer>
     </div>
   );
