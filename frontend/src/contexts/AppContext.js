@@ -34,14 +34,36 @@ export const AppProvider = ({ children }) => {
     return data || [];
   }, [activeChildId]);
 
+  const ensureParentExists = useCallback(async (user) => {
+    // Upsert parent row using the now-active session so RLS passes
+    const meta = user.user_metadata || {};
+    const name = meta.name || meta.full_name || (user.email || '').split('@')[0];
+    try {
+      await supabase.from('parents').upsert(
+        { auth_id: user.id, name, email: user.email },
+        { onConflict: 'auth_id', ignoreDuplicates: false }
+      );
+    } catch (e) {
+      // ignore — parent may already exist
+    }
+  }, []);
+
   const refreshAll = useCallback(async (currentSession) => {
     if (!currentSession?.user) {
       setParent(null); setChildren([]); setActiveChildId(null);
       return;
     }
-    const p = await refreshParent(currentSession.user.id);
+    // Ensure parent row exists with session active (RLS safe)
+    await ensureParentExists(currentSession.user);
+    let p = await refreshParent(currentSession.user.id);
+    // Retry once if RLS race condition
+    if (!p) {
+      await new Promise((r) => setTimeout(r, 500));
+      await ensureParentExists(currentSession.user);
+      p = await refreshParent(currentSession.user.id);
+    }
     if (p) await refreshChildren(p.id);
-  }, [refreshParent, refreshChildren]);
+  }, [refreshParent, refreshChildren, ensureParentExists]);
 
   useEffect(() => {
     let mounted = true;

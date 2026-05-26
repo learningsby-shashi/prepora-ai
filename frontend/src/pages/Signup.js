@@ -21,17 +21,8 @@ export default function Signup() {
       });
       if (error) throw error;
       if (data.user) {
-        // insert into parents table
-        const { error: pErr } = await supabase.from('parents').insert({
-          auth_id: data.user.id,
-          name: form.name,
-          email: form.email,
-        });
-        if (pErr && !String(pErr.message || '').includes('duplicate')) {
-          // Could fail if RLS denies until session is established. Try again after a small delay.
-          await new Promise((r) => setTimeout(r, 600));
-          await supabase.from('parents').insert({ auth_id: data.user.id, name: form.name, email: form.email });
-        }
+        // Wait for session to propagate, then upsert parent via AppContext flow
+        await new Promise((r) => setTimeout(r, 400));
       }
       if (data.session) {
         showToast('Welcome to Prepora.ai!', 'success');

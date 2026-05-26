@@ -21,11 +21,13 @@ export default function Onboarding() {
   const [prefs, setPrefs] = useState({ daily_goal_minutes: 30, difficulty_preference: 'Adaptive' });
   const [createdChildId, setCreatedChildId] = useState(null);
 
+  // Run-once: if user already onboarded (has children), send to dashboard
   useEffect(() => {
-    if (existing && existing.length > 0 && !createdChildId) {
+    if (existing && existing.length > 0) {
       navigate('/dashboard');
     }
-  }, [existing, createdChildId, navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Make sure parents row exists even if signup race-condition skipped it
   useEffect(() => {
