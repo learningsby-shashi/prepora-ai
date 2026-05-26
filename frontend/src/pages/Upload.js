@@ -19,15 +19,29 @@ export default function Upload() {
   const handleFile = async (f) => {
     if (!f) return;
     setFile(f);
-    // Naive client-side text extraction for text-like files
+    // Try server-side extraction (PDF via pdfplumber, image via Claude Vision)
     if (f.type.startsWith('text/') || f.name.endsWith('.txt') || f.name.endsWith('.md')) {
       const t = await f.text();
       setExtractedText(t);
       setText(t);
-    } else {
-      // For PDFs/images we'd typically OCR. MVP: prompt user to paste text below.
-      setExtractedText('');
-      showToast('For PDFs/images, paste the visible text below for analysis (MVP).', 'info');
+      return;
+    }
+    setLoading(true);
+    showToast('Extracting text from file…', 'info');
+    try {
+      const r = await claudeAPI.extractFile(f);
+      const extracted = (r?.text || '').trim();
+      if (extracted) {
+        setExtractedText(extracted);
+        setText(extracted);
+        showToast(`Extracted ${extracted.length} chars from ${r.source}`, 'success');
+      } else {
+        showToast('Could not extract text. Paste content manually below.', 'info');
+      }
+    } catch (e) {
+      showToast(e?.response?.data?.detail || e.message || 'Extraction failed', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 

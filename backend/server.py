@@ -1,11 +1,14 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from dotenv import load_dotenv
 from pathlib import Path
 import os
+import io
 import json
+import hashlib
+import base64
 import logging
 import re
 from anthropic import Anthropic
@@ -63,6 +66,43 @@ def _call_claude(system: str, user: str, max_tokens: int = 4096) -> Any:
     except Exception as e:
         logger.exception("Claude call failed")
         raise HTTPException(status_code=502, detail=f"Claude error: {str(e)[:300]}")
+
+
+# ----------- In-memory AI cache -----------
+# Keyed by sha256 of (endpoint + canonical_payload). TTL not enforced (process-life).
+_AI_CACHE: Dict[str, Any] = {}
+_AI_CACHE_MAX = 500
+
+
+def _cache_key(endpoint: str, payload: Any) -> str:
+    canon = json.dumps(payload, sort_keys=True, default=str)
+    h = hashlib.sha256(f"{endpoint}::{canon}".encode("utf-8")).hexdigest()
+    return h
+
+
+def _cache_get(key: str) -> Optional[Any]:
+    return _AI_CACHE.get(key)
+
+
+def _cache_set(key: str, value: Any) -> None:
+    if len(_AI_CACHE) >= _AI_CACHE_MAX:
+        # drop the first inserted entry (simple FIFO)
+        try:
+            _AI_CACHE.pop(next(iter(_AI_CACHE)))
+        except StopIteration:
+            pass
+    _AI_CACHE[key] = value
+
+
+def _call_claude_cached(endpoint: str, payload: Any, system: str, user: str, max_tokens: int = 4096) -> Any:
+    key = _cache_key(endpoint, payload)
+    cached = _cache_get(key)
+    if cached is not None:
+        logger.info("Cache HIT for %s", endpoint)
+        return {**cached, "_cached": True} if isinstance(cached, dict) else cached
+    result = _call_claude(system, user, max_tokens=max_tokens)
+    _cache_set(key, result)
+    return result
 
 
 # -------------- Schemas --------------
@@ -148,7 +188,7 @@ async def analyze_content(req: AnalyzeContentReq):
         "  \"contentSummary\": string\n"
         "}"
     )
-    return _call_claude(system, user, max_tokens=2000)
+    return _call_claude_cached("analyze-content", {"text": req.text[:8000]}, system, user, max_tokens=2000)
 
 
 @api_router.post("/claude/generate-questions")
@@ -189,7 +229,8 @@ async def generate_questions(req: GenerateQuestionsReq):
         "    \"back\": string (Flashcard only)\n"
         "  }]\n}"
     )
-    return _call_claude(system, user, max_tokens=8000)
+    cache_payload = {"content": req.content[:10000], "subject": req.subject, "class": req.klass, "chapter": req.chapter, "difficulty": req.difficulty, "count": req.count, "types": req.types}
+    return _call_claude_cached("generate-questions", cache_payload, system, user, max_tokens=8000)
 
 
 @api_router.post("/claude/evaluate-subjective")
@@ -233,7 +274,7 @@ async def generate_notes(req: GenerateNotesReq):
         "  \"flashcards\": [{\"front\":string,\"back\":string}],\n"
         "  \"importantTerms\": [{\"term\":string,\"definition\":string}]\n}"
     )
-    return _call_claude(system, user, max_tokens=3000)
+    return _call_claude_cached("generate-notes", {"content": req.content[:10000], "subject": req.subject, "chapter": req.chapter}, system, user, max_tokens=3000)
 
 
 @api_router.post("/claude/peer-analysis")
@@ -262,6 +303,82 @@ async def peer_analysis(req: PeerAnalysisReq):
         "  \"projectedRank\": {\"currentPace\":number,\"withFocusPlan\":number,\"improvement\":number}\n}"
     )
     return _call_claude(system, user, max_tokens=2500)
+
+
+@api_router.post("/extract-file")
+async def extract_file(file: UploadFile = File(...)):
+    """Extract readable text from a PDF or image upload.
+    PDFs: pdfplumber (text only). Images: Claude Vision OCR.
+    Returns: {text, source, pages?}
+    """
+    name = (file.filename or "").lower()
+    content_type = (file.content_type or "").lower()
+    raw = await file.read()
+    try:
+        if name.endswith(".pdf") or content_type == "application/pdf":
+            try:
+                import pdfplumber
+            except ImportError:
+                raise HTTPException(status_code=500, detail="pdfplumber not installed")
+            text_chunks = []
+            with pdfplumber.open(io.BytesIO(raw)) as pdf:
+                for page in pdf.pages[:20]:  # cap to first 20 pages
+                    t = page.extract_text() or ""
+                    if t.strip():
+                        text_chunks.append(t.strip())
+            extracted = "\n\n".join(text_chunks).strip()
+            if not extracted:
+                # Empty text PDF (scanned) — fallback to Claude vision on first page
+                try:
+                    with pdfplumber.open(io.BytesIO(raw)) as pdf:
+                        img = pdf.pages[0].to_image(resolution=180).original
+                        buf = io.BytesIO()
+                        img.save(buf, format="PNG")
+                        b64 = base64.b64encode(buf.getvalue()).decode()
+                        extracted = _vision_extract(b64, "image/png")
+                except Exception as e:
+                    logger.warning("PDF vision fallback failed: %s", e)
+            return {"text": extracted, "source": "pdf", "pages": len(text_chunks)}
+        elif content_type.startswith("image/") or name.endswith((".png", ".jpg", ".jpeg", ".webp", ".heic", ".heif")):
+            media_type = content_type if content_type.startswith("image/") else "image/png"
+            b64 = base64.b64encode(raw).decode()
+            extracted = _vision_extract(b64, media_type)
+            return {"text": extracted, "source": "image"}
+        else:
+            # Treat as text file
+            try:
+                extracted = raw.decode("utf-8", errors="ignore")
+            except Exception:
+                extracted = ""
+            return {"text": extracted, "source": "text"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("File extraction failed")
+        raise HTTPException(status_code=500, detail=f"Extraction failed: {str(e)[:200]}")
+
+
+def _vision_extract(b64_data: str, media_type: str) -> str:
+    """Use Claude Vision to extract readable text from an image (OCR-style)."""
+    if not anthropic_client:
+        raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY not configured")
+    try:
+        msg = anthropic_client.messages.create(
+            model=CLAUDE_MODEL,
+            max_tokens=4000,
+            system="You are an OCR engine. Extract ALL readable text from the image exactly as it appears, preserving line breaks. Do not summarise. Output plain text only, no markdown.",
+            messages=[{
+                "role": "user",
+                "content": [
+                    {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": b64_data}},
+                    {"type": "text", "text": "Extract all readable text from this image. Return only the text, no commentary."},
+                ],
+            }],
+        )
+        return (msg.content[0].text or "").strip()
+    except Exception as e:
+        logger.exception("Vision extraction failed")
+        return ""
 
 
 app.include_router(api_router)

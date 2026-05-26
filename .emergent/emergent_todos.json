@@ -1,22 +1,22 @@
 [
   {
-    "content": "Phase 1: POC validated (Supabase + Claude + Storage)",
+    "content": "Phase 3: Server-side PDF/image extraction in /upload",
     "status": "completed"
   },
   {
-    "content": "Phase 2: Backend FastAPI Claude proxy (5 endpoints)",
+    "content": "Phase 3: Cache AI outputs per content hash",
     "status": "completed"
   },
   {
-    "content": "Phase 2: Frontend full app (15 pages + layout + auth)",
+    "content": "Phase 3: Idempotency guard on mock-peer seeding",
     "status": "completed"
   },
   {
-    "content": "Phase 2: RLS policies fixed (user ran SQL)",
-    "status": "completed"
+    "content": "Phase 3: Deployment guidance / readiness check",
+    "status": "in_progress"
   },
   {
-    "content": "Phase 2: Testing via testing_agent_v3 - Backend 6/6 + Frontend 16/16",
-    "status": "completed"
+    "content": "Phase 3: Re-test via testing_agent_v3 after enhancements",
+    "status": "pending"
   }
 ]

@@ -52,6 +52,15 @@ export default function Onboarding() {
   };
 
   const seedMockPeers = async (childId, schoolName, klass, section, board) => {
+    // Idempotency: check if mock peers for this child already exist
+    const { data: existingMocks } = await supabase
+      .from('peer_benchmark_pool')
+      .select('id')
+      .like('anonymous_id', `mock_${childId.slice(0,8)}_%`)
+      .limit(1);
+    if (existingMocks && existingMocks.length > 0) {
+      return; // already seeded
+    }
     const mocks = [];
     for (let i = 0; i < 15; i++) {
       mocks.push({

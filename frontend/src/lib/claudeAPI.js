@@ -8,6 +8,12 @@ export const claudeAPI = {
     const { data } = await axios.post(`${API}/claude/analyze-content`, { text, childContext });
     return data;
   },
+  extractFile: async (file) => {
+    const fd = new FormData();
+    fd.append('file', file);
+    const { data } = await axios.post(`${API}/extract-file`, fd, { headers: { 'Content-Type': 'multipart/form-data' }, timeout: 120000 });
+    return data;
+  },
   generateQuestions: async (payload) => {
     const { data } = await axios.post(`${API}/claude/generate-questions`, payload, { timeout: 120000 });
     return data;
