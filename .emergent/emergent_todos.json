@@ -1,50 +1,22 @@
 [
   {
-    "content": "Phase 1: Set up env files (frontend + backend)",
+    "content": "Phase 1: POC validated (Supabase + Claude + Storage)",
     "status": "completed"
   },
   {
-    "content": "Phase 1: Verify Supabase DB schema reachable via Python script",
+    "content": "Phase 2: Backend FastAPI Claude proxy (5 endpoints)",
     "status": "completed"
   },
   {
-    "content": "Phase 1: Verify Anthropic Claude API works",
+    "content": "Phase 2: Frontend full app (15 pages + layout + auth)",
     "status": "completed"
   },
   {
-    "content": "Phase 1: Verify Supabase Storage bucket exists",
+    "content": "Phase 2: RLS policies fixed (user ran SQL)",
     "status": "completed"
   },
   {
-    "content": "Phase 2: Build FastAPI backend with 5 Claude proxy endpoints",
+    "content": "Phase 2: Testing via testing_agent_v3 - Backend 6/6 + Frontend 16/16",
     "status": "completed"
-  },
-  {
-    "content": "Phase 2: Build React frontend - foundation (routing, layout, sidebar, bottom nav)",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: Auth pages (signup, login, onboarding)",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: Dashboard + Upload + Generate + Question Bank pages",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: Practice + Results pages",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: Leaderboard + My Standing + Reports pages",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: Notes + Achievements + Settings pages",
-    "status": "completed"
-  },
-  {
-    "content": "Phase 2: Test via testing_agent_v3",
-    "status": "in_progress"
   }
 ]

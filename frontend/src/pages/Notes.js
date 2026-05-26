@@ -84,14 +84,14 @@ export default function Notes() {
         <div style={{ display: 'grid', gridTemplateColumns: activeNote ? '300px 1fr' : '1fr', gap: 14 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, maxHeight: 'calc(100vh - 230px)', overflowY: 'auto' }}>
             {filtered.map((n) => (
-              <button key={n.id} onClick={() => { setActiveNote(n); setFlipped({}); }} className="card-tight" style={{ border: activeNote?.id === n.id ? '2px solid #4F46E5' : '1px solid #E2E8F0', borderRadius: 12, padding: 12, background: 'white', textAlign: 'left', cursor: 'pointer' }}>
+              <div key={n.id} role="button" tabIndex={0} onClick={() => { setActiveNote(n); setFlipped({}); }} className="card-tight" style={{ border: activeNote?.id === n.id ? '2px solid #4F46E5' : '1px solid #E2E8F0', borderRadius: 12, padding: 12, background: 'white', textAlign: 'left', cursor: 'pointer' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span className="badge badge-indigo">{n.subject}</span>
-                  <button onClick={(e) => { e.stopPropagation(); toggleBookmark(n); }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18 }}>{n.bookmarked ? '⭐' : '☆'}</button>
+                  <span onClick={(e) => { e.stopPropagation(); toggleBookmark(n); }} role="button" style={{ cursor: 'pointer', fontSize: 18 }}>{n.bookmarked ? '⭐' : '☆'}</span>
                 </div>
                 <div style={{ fontWeight: 700, marginTop: 6 }}>{n.chapter || 'Untitled'}</div>
                 <div style={{ fontSize: 12, color: '#64748B' }}>{(n.flashcards || []).length} flashcards</div>
-              </button>
+              </div>
             ))}
           </div>
           {activeNote && (() => {
