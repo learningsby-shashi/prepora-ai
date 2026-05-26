@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider, useApp } from './contexts/AppContext';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { registerToast } from './lib/claudeAPI';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -22,7 +24,9 @@ import Achievements from './pages/Achievements';
 import Settings from './pages/Settings';
 
 function LandingOrRedirect() {
-  const { session, loading } = useApp();
+  const { session, loading, showToast } = useApp();
+  // Register the toast handler with the axios interceptor
+  React.useEffect(() => { registerToast(showToast); }, [showToast]);
   if (loading) return null;
   if (session) return <Navigate to="/dashboard" replace />;
   return <Landing />;
@@ -31,8 +35,9 @@ function LandingOrRedirect() {
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <AppProvider>
+      <ErrorBoundary>
+        <BrowserRouter>
+          <AppProvider>
           <Routes>
             <Route path="/" element={<LandingOrRedirect />} />
             <Route path="/login" element={<Login />} />
@@ -55,6 +60,7 @@ function App() {
           </Routes>
         </AppProvider>
       </BrowserRouter>
+    </ErrorBoundary>
     </div>
   );
 }

@@ -163,7 +163,47 @@ async def root():
 
 @api_router.get("/health")
 async def health():
-    return {"status": "healthy", "claude_configured": bool(anthropic_client)}
+    return {
+        "status": "healthy",
+        "claude_configured": bool(anthropic_client),
+        "model": CLAUDE_MODEL,
+        "cache_size": len(_AI_CACHE),
+    }
+
+
+@api_router.get("/health/deep")
+async def health_deep():
+    """Deep health check: verifies external dependencies are reachable."""
+    out = {"status": "healthy", "checks": {}}
+    # Claude
+    try:
+        if not anthropic_client:
+            raise RuntimeError("ANTHROPIC_API_KEY missing")
+        # Cheap ping: tokenize-only style call with min tokens
+        anthropic_client.messages.create(model=CLAUDE_MODEL, max_tokens=5, messages=[{"role": "user", "content": "ping"}])
+        out["checks"]["claude"] = "ok"
+    except Exception as e:
+        out["checks"]["claude"] = f"fail: {str(e)[:140]}"
+        out["status"] = "degraded"
+    # Supabase reachability (using anon key on a known table)
+    try:
+        sb_url = os.environ.get("SUPABASE_URL")
+        sb_key = os.environ.get("SUPABASE_ANON_KEY")
+        if sb_url and sb_key:
+            import urllib.request
+            req = urllib.request.Request(
+                f"{sb_url}/rest/v1/parents?select=id&limit=1",
+                headers={"apikey": sb_key, "Authorization": f"Bearer {sb_key}"},
+            )
+            with urllib.request.urlopen(req, timeout=5) as r:
+                _ = r.read()
+            out["checks"]["supabase"] = "ok"
+        else:
+            out["checks"]["supabase"] = "not_configured"
+    except Exception as e:
+        out["checks"]["supabase"] = f"fail: {str(e)[:140]}"
+        out["status"] = "degraded"
+    return out
 
 
 @api_router.post("/claude/analyze-content")
@@ -382,6 +422,21 @@ def _vision_extract(b64_data: str, media_type: str) -> str:
 
 
 app.include_router(api_router)
+
+
+# Global exception handler — return JSON instead of HTML for any unhandled error
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+
+@app.exception_handler(Exception)
+async def _unhandled_exception_handler(request: Request, exc: Exception):
+    logger.exception("Unhandled error on %s", request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error", "type": type(exc).__name__},
+    )
+
 
 app.add_middleware(
     CORSMiddleware,

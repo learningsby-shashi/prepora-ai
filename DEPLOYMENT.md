@@ -20,7 +20,7 @@
    - `ANTHROPIC_API_KEY`
    - `SUPABASE_URL`
    - `SUPABASE_ANON_KEY`
-   - `CORS_ORIGINS=https://prepora.ai,https://www.prepora.ai`
+   - `CORS_ORIGINS=https://prepora.co.in,https://www.prepora.co.in`
 5. Note the public URL Render gives you (e.g. `https://prepora-api.onrender.com`).
 
 ### Railway
@@ -45,10 +45,10 @@ In Vercel → Project → Settings → Environment Variables:
 4. Build command auto-detected (`yarn build`).
 5. Vercel deploys. Verify the preview URL works.
 
-## 3. Custom Domain (prepora.ai)
+## 3. Custom Domain (prepora.co.in)
 
 ### In Vercel
-1. Project → Settings → Domains → Add `prepora.ai` and `www.prepora.ai`.
+1. Project → Settings → Domains → Add `prepora.co.in` and `www.prepora.co.in`.
 2. Vercel shows the required DNS records:
    - For root: `A` record → 76.76.21.21 (or Vercel's nameservers)
    - For www: `CNAME` → `cname.vercel-dns.com`
@@ -56,14 +56,14 @@ In Vercel → Project → Settings → Environment Variables:
 4. Wait for SSL to provision (≤10 min).
 
 ### Update Supabase Auth allowed redirect URLs
-1. Supabase → Authentication → URL Configuration → Site URL = `https://prepora.ai`.
-2. Add `https://prepora.ai/**` to Redirect URLs.
+1. Supabase → Authentication → URL Configuration → Site URL = `https://prepora.co.in`.
+2. Add `https://prepora.co.in/**` to Redirect URLs.
 
 ### Update CORS on backend
-Set `CORS_ORIGINS=https://prepora.ai,https://www.prepora.ai` in your backend host's env vars.
+Set `CORS_ORIGINS=https://prepora.co.in,https://www.prepora.co.in` in your backend host's env vars.
 
 ## 4. Post-Deploy Smoke Tests
-- [ ] Visit `https://prepora.ai/` — landing page loads, no Emergent badge
+- [ ] Visit `https://prepora.co.in/` — landing page loads, no Emergent badge
 - [ ] Signup with a new email — redirects to onboarding
 - [ ] Complete onboarding → dashboard renders with 15 mock peers
 - [ ] Upload a small PDF — text extraction works via backend

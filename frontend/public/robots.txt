@@ -15,4 +15,4 @@ Disallow: /notes
 Disallow: /achievements
 Disallow: /settings
 
-Sitemap: https://prepora.ai/sitemap.xml
+Sitemap: https://prepora.co.in/sitemap.xml
