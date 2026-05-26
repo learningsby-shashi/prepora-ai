@@ -1,0 +1,50 @@
+[
+  {
+    "content": "Phase 1: Set up env files (frontend + backend)",
+    "status": "in_progress"
+  },
+  {
+    "content": "Phase 1: Verify Supabase DB schema reachable via Python script",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 1: Verify Anthropic Claude API works",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 1: Verify Supabase Storage bucket exists",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Build FastAPI backend with 5 Claude proxy endpoints",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Build React frontend - foundation (routing, layout, sidebar, bottom nav)",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Auth pages (signup, login, onboarding)",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Dashboard + Upload + Generate + Question Bank pages",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Practice + Results pages",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Leaderboard + My Standing + Reports pages",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Notes + Achievements + Settings pages",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 2: Test via testing_agent_v3",
+    "status": "pending"
+  }
+]
