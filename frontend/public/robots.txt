@@ -1,0 +1,18 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /onboarding
+Disallow: /upload
+Disallow: /generate
+Disallow: /question-bank
+Disallow: /practice
+Disallow: /results
+Disallow: /leaderboard
+Disallow: /my-standing
+Disallow: /reports
+Disallow: /notes
+Disallow: /achievements
+Disallow: /settings
+
+Sitemap: https://prepora.ai/sitemap.xml
